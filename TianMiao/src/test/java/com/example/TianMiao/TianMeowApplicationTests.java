@@ -1,4 +1,4 @@
-package com.example.TianMeow;
+package com.example.TianMiao;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

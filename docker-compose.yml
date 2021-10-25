@@ -29,25 +29,17 @@ services:
             options:
                 loki-url: 'http://localhost:3100/api/prom/push'
     tempo:
-        image: grafana/tempo:0.6.0
-        command: ["--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false"]
-        ports:
-            - 8081:80
-    tempo-query:
-        image: grafana/tempo-query:0.6.0
-        #command: ["--grpc-storage-plugin.configuration-file=/etc/tempo-query.yaml"]
-        environment:
-            - BACKEND=tempo:80
+        image: grafana/tempo:1.0.0
+        command: ["--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false", "--config.file=/etc/tempo.yaml"]
         volumes:
-            - ./etc/tempo-query.yaml:/etc/tempo-query.yaml
+            - ./config/tempo/tempo.yaml:/etc/tempo.yaml
+            - ./tempo-data:/tmp/tempo
         ports:
-            - "16686:16686"  # jaeger-ui
-        depends_on:
-            - tempo
-        logging:
-            driver: loki
-            options:
-                loki-url: 'http://localhost:3100/api/prom/push'
+            - "14268:14268"  # jaeger ingest
+            - "3200:3200"   # tempo
+            - "55680:55680"  # otlp grpc
+            - "55681:55681"  # otlp http
+            - "9411:9411"   # zipkin
     loki:
         image: grafana/loki:2.2.0
         command: -config.file=/etc/loki/local-config.yaml
@@ -58,7 +50,7 @@ services:
             options:
                 loki-url: 'http://localhost:3100/api/prom/push'
     grafana:
-        image: grafana/grafana:7.3.7
+        image: grafana/grafana:7.5.11
         volumes:
             - ./config/grafana:/etc/grafana/provisioning/datasources
         environment:
