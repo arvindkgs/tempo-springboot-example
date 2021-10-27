@@ -16,12 +16,12 @@ services:
         ports:
             - 8080:8080
             - 9464:9464
+        volumes:
+            - ./opentelemetry-javaagent.jar:/opentelemetry-javaagent.jar
         environment:
-            - OTEL_EXPORTER=otlp_span,prometheus
             - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:55680
-            - OTEL_EXPORTER_OTLP_INSECURE=true
             - OTEL_RESOURCE_ATTRIBUTES=service.name=demo
-            - JAVA_OPTS=-javaagent:/opentelemetry-javaagent-all.jar -Dlogging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG '-Dlogging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg traceID=%X{trace_id} %n'
+            - JAVA_OPTS=-javaagent:/opentelemetry-javaagent.jar -Dlogging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG '-Dlogging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg traceID=%X{trace_id} %n'
         depends_on:
             - mysql
         logging:
