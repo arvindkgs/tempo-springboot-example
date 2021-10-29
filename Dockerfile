@@ -4,7 +4,7 @@ FROM maven:3.6.3-openjdk-11-slim as build
 WORKDIR /usr/src/app
 
 # Ensure we copy just the app code
-COPY TianMiao /usr/src/app
+COPY Zipkin /usr/src/app
 
 # Build the WAR file, install to /usr/src/app/target
 RUN mvn clean install -Dmaven.test.skip=true

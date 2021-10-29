@@ -15,8 +15,10 @@ You will need:
 `docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions`
 
 ### Step 3 - Run the project with docker
-1. Open your commandline, cd to the git directory
-1. Run `docker-compose up` (add -d if you want it to run in background)
+1. Open your commandline, cd to the zipkin directory
+   1. `mvn clean package -DskipTests`
+   2. `docker build -t zipkin:latest .`
+2. Run `docker-compose up` (add -d if you want it to run in background)
 
 ### Step 4 - Rerun if there's an error on first run :(
 1. If you get an error while starting tomcat, it probably is because the docker container running Tomcat doesn't wait for MySQL to finish running it's setup script.
@@ -24,13 +26,13 @@ You will need:
 1. Stop all containers and start again should fix the problem.
 
 ### Step 5 - Exercise the API
-> `curl http://localhost:8080/TianMiao/api/users`
+> `curl http://localhost:8080/api/users`
 
-> `curl -X POST -H 'Content-Type: application/json' -d '{"username": "test"}'  http://localhost:8080/TianMiao/api/users`
+> `curl -X POST -H 'Content-Type: application/json' -d '{"username": "test"}'  http://localhost:8080/api/users`
 
-> `curl http://localhost:8080/TianMiao/api/users/1`
+> `curl http://localhost:8080/api/users/1`
 
-> `curl -X PUT -H 'Content-Type: application/json' -d '{"username": "newUser"}' http://localhost:8080/TianMiao/api/notes/`
+> `curl -X PUT -H 'Content-Type: application/json' -d '{"username": "newUser"}' http://localhost:8080/api/notes/`
 
 ### Step 6 - Find some traces!
 
