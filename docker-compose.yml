@@ -10,18 +10,12 @@ services:
             MYSQL_DATABASE: TianMiao
         volumes:
             - ./MySQL:/docker-entrypoint-initdb.d
-    tomcat:
-        build: ./
-        container_name: tomcat_service
+    zikpin:
+        image: zipkin:latest
+        container_name: zipkin
         ports:
             - 8080:8080
             - 9464:9464
-        volumes:
-            - ./opentelemetry-javaagent.jar:/opentelemetry-javaagent.jar
-        environment:
-            - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:55680
-            - OTEL_RESOURCE_ATTRIBUTES=service.name=demo
-            - JAVA_OPTS=-javaagent:/opentelemetry-javaagent.jar -Dlogging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG '-Dlogging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg traceID=%X{trace_id} %n'
         depends_on:
             - mysql
         logging:
@@ -30,7 +24,7 @@ services:
                 loki-url: 'http://localhost:3100/api/prom/push'
     tempo:
         image: grafana/tempo:1.0.0
-        command: ["--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false", "--config.file=/etc/tempo.yaml"]
+        command: ["--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false", "--config.file=/etc/tempo.yaml", "--distributor.log-received-traces=true"]
         volumes:
             - ./config/tempo/tempo.yaml:/etc/tempo.yaml
             - ./tempo-data:/tmp/tempo
